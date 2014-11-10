@@ -38,6 +38,7 @@ import cn.taoschool.pulltorefresh.library.PullToRefreshBase;
 import cn.taoschool.pulltorefresh.library.PullToRefreshListView;
 import cn.taoschool.pulltorefresh.library.PullToRefreshBase.Mode;
 import cn.taoschool.ui.SchoolDetailActivity;
+import cn.taoschool.util.EnvUtils;
 import cn.taoschool.util.FinalDataUitl;
 import cn.taoschool.util.UtilToast;
 
@@ -107,7 +108,7 @@ OnClickListener{
 		et_search = (EditText) parentView.findViewById(R.id.et_search);
 		iv_cancle_search = (ImageView) parentView.findViewById(R.id.iv_cancel_search);
 		tv_search = (TextView) parentView.findViewById(R.id.iv_search);
-				
+		mLoadingView = parentView.findViewById(R.id.ll_loading);
 		sub_title1 = (LinearLayout) parentView.findViewById(R.id.sub_title_lable1);
 		sub_title2 = (LinearLayout) parentView.findViewById(R.id.sub_title_lable2);
 		sub_title3 = (LinearLayout) parentView.findViewById(R.id.sub_title_lable3);
@@ -259,6 +260,7 @@ OnClickListener{
 
 	@Override
 	protected void getMoreData() {
+		
 		loadOperation = 1;
 		lvSchoolProfile.getLoadingLayoutProxy().setLastUpdatedLabel("正在加载。。。。");
 		getSchoolItemsFromServer();
@@ -297,7 +299,13 @@ OnClickListener{
 	 * more=1 下拉加载更多
 	 * **/
 	private void getSchoolItemsFromServer(){
-		showProgressDialog("请求中...");
+		if(!EnvUtils.isNetworkConnected(getActivity())){
+			UtilToast.showShort(getActivity(), R.string.net_cannot_used);
+			lvSchoolProfile.onRefreshComplete();
+			
+			return;
+		}
+		showProgressDialog();
 		setFilterParam();
 		mController.getSchoolProfileList(getActivity(), this, filter_params);			
 	}
@@ -359,9 +367,14 @@ OnClickListener{
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		if(parent == actualListView){
+			//下拉菜单未收缩
 			if(mCurSubTitle!=0){
 				mCurSubTitle = 0;
 				initSubtitleMenu();
+				return;
+			}
+			if(!EnvUtils.isNetworkConnected(getActivity())){
+				UtilToast.showShort(getActivity(), R.string.net_cannot_used);
 				return;
 			}
 			Intent intent = new Intent(getActivity(),SchoolDetailActivity.class);

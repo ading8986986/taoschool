@@ -41,11 +41,17 @@ public class DetailOfSchoolFragment extends BasicDetailFragment {
 		this.listener = listener;
 	}
 	
+	@Override
+	public void onPause() {
+		Log.i(TAG, "DetailOfSchoolFragment onPause");
+		
+		super.onPause();
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		Log.i("TAG","onCreatView");
+		Log.i("TAG","DetailOfSchoolFragment onCreatView");
 		View mView = LinearLayout.inflate(getActivity(), R.layout.fragment_school_profile, null);
 		initView(mView);
 		initData();
@@ -63,7 +69,8 @@ public class DetailOfSchoolFragment extends BasicDetailFragment {
 		tv_szd = (TextView)mView.findViewById(R.id.tv_szd);
 		tv_txdz = (TextView)mView.findViewById(R.id.tv_txdz);
 		tv_web = (TextView)mView.findViewById(R.id.tv_web);
-		tv_detail = (TextView)mView.findViewById(R.id.tv_detail);		
+		tv_detail = (TextView)mView.findViewById(R.id.tv_detail);	
+		mLoadingView = mView.findViewById(R.id.ll_loading);
 	}
 
 	public void initData() {
@@ -72,7 +79,7 @@ public class DetailOfSchoolFragment extends BasicDetailFragment {
 	
 	@Override
 	public void getData(){
-		showProgressDialog("正在加载");
+		showProgressDialog();
 		mController.getSchoolDetail(getActivity(), this, SchoolDetailActivity.getSchoolID());		
 	}
 

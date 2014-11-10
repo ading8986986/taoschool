@@ -38,6 +38,7 @@
     <color name="red_font">#f16054</color>
     <!-- 我的淘 -->
     <color name="title_bar_green">#d0ebdd</color>
-    
+    <color name="milky_white">#fafafa</color>
+    <color name="green_btn">#67bf95</color>
     
 </resources>

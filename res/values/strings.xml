@@ -25,7 +25,7 @@
     <string name="toast_request_failed">获取失败，稍后重试</string>
     <string name="dialog_btn_ok">确定</string>
     <string name="dialog_btn_cancel">取消</string>
-    <string name="dialog_pb_msg">请求中。。。</string>
+    <string name="dialog_pb_msg">请求中</string>
     <string name="title_activity_school_detail">SchoolDetailActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="unknow">未知</string>
@@ -43,20 +43,33 @@
     <!-- 淘专业 -->
     <string name="score_hint">请输入您要查的分数范围:</string>
     <string name="score_commit">确定并查询</string>
-    
+
     <!-- 我的淘 -->
     <string name="hello_title">hello,欢迎使用淘大学</string>
     <string name="set_param">请设置你的淘参数，以便更加快捷地查找大学和专业信息</string>
-    <string name="student_info">考生信息</string>
-    <string name="student_score">估计分数</string>
-    <string name="student_location">考生所在地</string>
-    <string name="student_branch">科类</string>
-    <string name="register_info">报考信息</string>
-    <string name="register_location">报考地区</string>
-    <string name="register_preference">报考首选项</string>
+    <string name="all_hint">全部</string>
+    <string name="student_info">考生信息:</string>
+    <string name="student_score">估计分数:</string>
+    <string name="score_deviation">分数误差:</string>
+    <string name="student_location">考生所在地:</string>
+    <string name="location_hint">请选择考试所在地...</string>
+    <string name="student_branch">科类:</string>
+    <string name="register_info">报考信息:</string>
+    <string name="register_location">报考地区:</string>
+    <string name="register_hint">请选择报考地区...</string>
+    <string name="register_preference">报考首选项:</string>
     <string name="register_school_type">高校类型</string>
-    <string name="register_school_bxlx">办学类型</string>
-    <string name="register_school_name">高校名称</string>
+    <string name="school_pre">优先考虑高校</string>
+    <string name="major_pre">优先考虑专业</string>
+    <string name="register_school_system">办学类型</string>
+    <string name="register_major_type">专业类型</string>
     <string name="register_school_pclx">批次类型</string>
+    <string name="liberal_art">文科</string>
+    <string name="science">理科</string>
+    <string name="confirm">确认并查询</string>
+    <string name="five_score">±5</string>
+    <string name="ten_score">±10</string>
+    <string name="fifteen_score">±15</string>
+    <string name="no_score_hint">请输入预估分数</string>
 
 </resources>

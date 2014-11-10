@@ -27,6 +27,8 @@
     <dimen name="detail_activity_width1">65dp</dimen>
     <dimen name="tv_main_subtile_width">55dp</dimen>
     <dimen name="tv_main_subtile_heigth">32dp</dimen>
+    <dimen name="my_tao_common_padding">5dp</dimen>
+    <dimen name="my_tao_common_vertical_margin">10dp</dimen>
     <!-- 字体 -->
     <dimen name="title">20sp</dimen>
     <dimen name="detail_activity_content">12sp</dimen>

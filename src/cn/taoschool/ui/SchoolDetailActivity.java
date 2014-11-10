@@ -99,6 +99,8 @@ public class SchoolDetailActivity extends FragmentActivity implements OnClickLis
 		tv_sub_title3.setOnClickListener(this);
 		tv_sub_title4.setOnClickListener(this);
 		tv_more.setOnClickListener(this);
+		iv_back.setOnClickListener(this);
+		
 	}
 
 	private void initData(){
@@ -150,6 +152,7 @@ public class SchoolDetailActivity extends FragmentActivity implements OnClickLis
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setCurrentItem(0); 
 		mViewPager.setOnPageChangeListener(this);
+		mViewPager.setOffscreenPageLimit(0);
 		updateSubTitleSel();
 	}
 	
@@ -222,6 +225,10 @@ public class SchoolDetailActivity extends FragmentActivity implements OnClickLis
 			break;
 			case R.id.tv_more:
 			break;
+			case R.id.iv_back:
+				if(!onReturnAction())
+					finish();
+				break;
 			default:
 			break;
 		}
@@ -273,13 +280,20 @@ public class SchoolDetailActivity extends FragmentActivity implements OnClickLis
 	@Override  
     public boolean onKeyDown(int keyCode, KeyEvent event) {  
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) { 
-        	if(mFragments.get(mCurPage).onReturnAction())
-        		return false;
+        	if(onReturnAction())
+        		return true;
         	else
         		return super.onKeyDown(keyCode, event);  
         } else  
             return super.onKeyDown(keyCode, event);  
     }
+	
+	private boolean onReturnAction(){
+		if(mFragments.get(mCurPage).onReturnAction())
+    		return true;
+		else
+			return false;
+	}
 
 
 

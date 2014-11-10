@@ -15,13 +15,16 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import cn.taoschool.R;
 import cn.taoschool.taoSchoolApplication;
 import cn.taoschool.bean.SchoolItem;
 import cn.taoschool.cache.AsyncImageLoader;
 import cn.taoschool.cache.AsyncImageLoader.ImageCallback;
 import cn.taoschool.listener.IDetailActivityReqListener;
 import cn.taoschool.listener.IMainActivityReqListener;
+import cn.taoschool.pulltorefresh.library.internal.Utils;
 import cn.taoschool.util.Constants;
+import cn.taoschool.util.UtilToast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -72,6 +75,7 @@ public class HttpController {
 	
 	
 	public void getSchoolProfileList(final Context context, final IMainActivityReqListener listener,JSONObject params) {	
+		
 		String url = Constants.SERVER_IP + url_school_profile;
 		Log.i(TAG,url);
 		JsonObjectRequest getSchoolProfileReq = new JsonObjectRequest(Method.POST, url,
@@ -146,6 +150,7 @@ public class HttpController {
 	}
 		
 	public void getSchoolProfileImages(final IMainActivityReqListener listener,final List<SchoolItem> list){
+		
 		if( null == loader ){
 			loader = new AsyncImageLoader(ctx);
 			//将图片缓存至外部文件中  
@@ -186,6 +191,7 @@ public class HttpController {
 	
 	public void getSchoolDetail(Context ctx,final IDetailActivityReqListener listener,int schoolID){
 		//mlistener = listener;
+		
 		String url = Constants.SERVER_IP + url_school_detail + "?colid=" + schoolID;
 		JsonObjectRequest getSchoolDetailReq = new JsonObjectRequest(Method.GET, url, null, getDetailSuccess(listener), getDetailFail(listener));
 		RequestManager.getInstance(ctx.getApplicationContext())
@@ -252,6 +258,7 @@ public class HttpController {
 	}
 	
 	public void getDetailEnrollInfo(Context ctx,final IDetailActivityReqListener listener,Map param){
+		
 		String url = Constants.DETAIL_ENROLL_INFO + 
 				"?province=" + param.get("province")+
 				"&colid=" + param.get("colid")+
@@ -324,6 +331,7 @@ public class HttpController {
 	}
 
 	public void checkVersion(final Context context, final IMainActivityReqListener listener){
+		
 		String url = Constants.DOWNLOAD_PATH;
 		JsonObjectRequest checkReq = new JsonObjectRequest(url,null, 
 				new Listener<JSONObject>() {

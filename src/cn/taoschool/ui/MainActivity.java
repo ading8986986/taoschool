@@ -14,6 +14,8 @@ import cn.taoschool.ui.fragment.BasicMainFragment;
 import cn.taoschool.ui.fragment.MainMajorFragment;
 import cn.taoschool.ui.fragment.MainSchoolFragment;
 import cn.taoschool.ui.fragment.MyTaoFragment;
+import cn.taoschool.util.EnvUtils;
+import cn.taoschool.util.UtilToast;
 
 
 import cn.taoschool.listener.IMainActivityReqListener;
@@ -159,6 +161,10 @@ OnPageChangeListener,OnClickListener
 	
 	private void checkForUpdate(){
 		Log.i(TAG,"Current version:" + HttpController.getVersionCode(this));
+		if(!EnvUtils.isNetworkConnected(this)){
+			UtilToast.showShort(this, R.string.net_cannot_used);
+			return;
+		}
 		mController.checkVersion(this, this);
 		/*JSONObject result  = new JSONObject();
 		try {
@@ -281,4 +287,5 @@ OnPageChangeListener,OnClickListener
 		// TODO Auto-generated method stub
 		
 	}
+	
 }

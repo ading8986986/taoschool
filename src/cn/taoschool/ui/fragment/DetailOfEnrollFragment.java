@@ -83,6 +83,7 @@ public class DetailOfEnrollFragment extends BasicDetailFragment implements OnCli
 		llBranch = (LinearLayout)mView.findViewById(R.id.ll_branch);
 		mListView = (ListView)mView.findViewById(R.id.lv_enroll_content);
 		lvFilter = (ListView)mView.findViewById(R.id.lv_filter);
+		mLoadingView = mView.findViewById(R.id.ll_loading);
 		
 		llProvince.setOnClickListener(this);
 		llYear.setOnClickListener(this);
@@ -115,7 +116,7 @@ public class DetailOfEnrollFragment extends BasicDetailFragment implements OnCli
 	
 	@Override
 	public void getData() {
-		showProgressDialog("正在加载");
+		showProgressDialog();
 		setFilterParam();
 		mAdapter.setEnrollDataList(null);
 		mController.getDetailEnrollInfo(getActivity(), this,reqParamMap );		
@@ -170,13 +171,13 @@ public class DetailOfEnrollFragment extends BasicDetailFragment implements OnCli
 		}
 	}
 	
-	private void setFilterListView(int position){
+	private void setFilterListView(){
 		lvFilter.setVisibility(View.GONE);
 		if(0 == mCurFilter){
 			return;
 		}
 		lvFilter.setVisibility(View.VISIBLE);
-		switch (position) {
+		switch (mCurFilter) {
 		case 1:
 			lvFilter.setAdapter(filterProvinceAdapter);
 			break;
@@ -215,7 +216,7 @@ public class DetailOfEnrollFragment extends BasicDetailFragment implements OnCli
 			break;
 		}
 		mCurFilter = 0;
-		setFilterListView(mCurFilter);
+		setFilterListView();
 		getData();
 	}
 
@@ -224,19 +225,22 @@ public class DetailOfEnrollFragment extends BasicDetailFragment implements OnCli
 		// TODO Auto-generated method stub
 		if(0 != mCurFilter){
 			mCurFilter =0;
-			setFilterListView(mCurFilter);
+			setFilterListView();
 			return true;
 		}
 		else return false;
 	}
 	
 	@Override
-	public void onStop() {
+	public void onPause() {
+		Log.i(TAG, "DetailOfEnrollFragment onPause");
 		// TODO Auto-generated method stub
 		mCurFilter =0;
-		setFilterListView(mCurFilter);
-		super.onStop();
+		setFilterListView();
+		super.onPause();
 	}
+	
+	
 
 	@Override
 	public void onClick(View v) {
@@ -244,15 +248,15 @@ public class DetailOfEnrollFragment extends BasicDetailFragment implements OnCli
 		switch (v.getId()) {
 		case R.id.ll_province:
 			mCurFilter = mCurFilter == 1?0:1;	
-			setFilterListView(mCurFilter);
+			setFilterListView();
 			break;
 		case R.id.ll_year:
 			mCurFilter = mCurFilter == 2?0:2;
-			setFilterListView(mCurFilter);
+			setFilterListView();
 			break;
 		case R.id.ll_branch:
 			mCurFilter = mCurFilter == 3?0:3;
-			setFilterListView(mCurFilter);
+			setFilterListView();
 			break;
 		case R.id.iv_view_chart:
 			AlertDialog dialog = new AlertDialog.Builder(getActivity())

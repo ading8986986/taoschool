@@ -2,21 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/detail_activity_padding"
-    android:paddingRight="@dimen/detail_activity_padding"
+    android:orientation="vertical"  
     android:paddingTop="@dimen/detail_activity_padding_ud" 
     android:paddingBottom="@dimen/detail_activity_padding_ud">
     
-    <include layout="@layout/common_title_in_detail"></include>
+    <include 
+        layout="@layout/common_title_in_detail"></include>
     <RelativeLayout 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         >
+        <include 
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           layout="@layout/layout_loading"/>
         <ListView 
 	        android:id="@+id/lv_enroll_content"
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
+	        android:paddingLeft="@dimen/detail_activity_padding"
+    		android:paddingRight="@dimen/detail_activity_padding"
 			android:dividerHeight="1dp"
 			android:divider="@color/gray_less"
 	        android:layout_marginBottom="@dimen/detail_activity_padding"
@@ -30,7 +35,8 @@
 	        android:padding="1dp"        
 	        android:background="@drawable/rect_gray"
             android:divider="@null"
-            android:visibility="gone">	        
+            android:visibility="gone"
+            >	        
 	    </ListView>
         
     </RelativeLayout>

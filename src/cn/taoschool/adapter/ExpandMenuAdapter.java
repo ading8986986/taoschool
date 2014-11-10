@@ -61,7 +61,7 @@ public class ExpandMenuAdapter extends BaseAdapter {
 	}
 	
 	private class ViewHolder{
-		public  TextView tvContent;
+		public TextView tvContent;
 		public ImageView ivDivider;
 		@SuppressLint("NewApi")
 		public ViewHolder(View convertView,int position){
