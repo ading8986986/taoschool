@@ -1,12 +1,16 @@
 package cn.taoschool.ui.fragment;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.json.JSONObject;
 
 import cn.taoschool.R;
 import cn.taoschool.bean.SchoolItem;
 import cn.taoschool.cache.AsyncImageLoader;
 import cn.taoschool.controller.HttpController;
-import cn.taoschool.listener.IDetailActivityReqListener;
+import cn.taoschool.listener.IDetailActivityFragmentListener;
 import cn.taoschool.ui.SchoolDetailActivity;
 import cn.taoschool.util.Constants;
 import cn.taoschool.util.DialogOfListStyle;
@@ -36,8 +40,8 @@ public class DetailOfSchoolFragment extends BasicDetailFragment {
 	private TextView tv_xxlx,tv_yxls,tv_szd,tv_txdz,tv_tel,tv_mail,tv_web;
 	private TextView tv_detail;
 	private HttpController mController;
-	private IDetailActivityReqListener listener;
-	public  DetailOfSchoolFragment(IDetailActivityReqListener listener) {
+	private IDetailActivityFragmentListener listener;
+	public  DetailOfSchoolFragment(IDetailActivityFragmentListener listener) {
 		this.listener = listener;
 	}
 	
@@ -93,7 +97,7 @@ public class DetailOfSchoolFragment extends BasicDetailFragment {
 	@Override
 	public void OnGetDetailInfo(boolean isSuccess, Object result) {
 		this.dissmissProgressDialog();
-		if(isSuccess&&null!=result){
+		if(isSuccess){
 			fillContent((JSONObject) result);
 			listener.OnGetDetailInfo(isSuccess, result);
 		}
@@ -104,6 +108,7 @@ public class DetailOfSchoolFragment extends BasicDetailFragment {
 	}
 	
 	private void fillContent(final JSONObject result){
+		if(null == result) return;
 		tv_xxlx.setText(FinalDataUitl.getBXLXByid(result.optInt("bxlxid"))+ "    (" +FinalDataUitl.getXLCCByid(result.optInt("xlccid")) + ")");
 		tv_txdz.setText(result.optString("coladdress"));
 		tv_web.setText(result.optString("colweb"));
@@ -123,12 +128,12 @@ public class DetailOfSchoolFragment extends BasicDetailFragment {
 		tv_szd.setText(FinalDataUitl.getProvinceByid(result.optInt("proid")));
 		tv_detail.setText(result.optString("coldes"));
 		String[] big_imageStrings = result.optString("colimg").split(",");
-		this.listener.OnGetImgUrl(big_imageStrings);
+		this.listener.OnGetImgUrl(Arrays.asList(big_imageStrings));
 	}
 
 
 	@Override
-	public void OnGetImgUrl(String[] imgUrls) {
+	public void OnGetImgUrl(List<String> imgUrls) {
 		// TODO Auto-generated method stub
 		
 	}

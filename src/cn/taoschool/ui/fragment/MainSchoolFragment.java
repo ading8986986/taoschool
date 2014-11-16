@@ -60,8 +60,7 @@ OnClickListener,OnItemClickListener{
 	private ImageView iv_cancle_search;
 	private TextView tv_search;
 
-	
-	
+	private boolean isTaskCancled = false;//网络任务没有被用户手动cancle
 	private DBManager dbManager;
 	private HttpController mController;
 	private EnvChecker envChecker;
@@ -83,7 +82,7 @@ OnClickListener,OnItemClickListener{
 	
 	private List<SchoolItem> schoolList;
 	private MainActivityListAdapter mAdapter;
-	private int mCurSubTitle = 0;//当前的那个选项Subtitle,0代表全都隐藏
+	//private int mCurSubTitle = 0;//当前的那个选项Subtitle,0代表全都隐藏
 	private List<String> list_province;
 	private List<String> list_xylx;
 	private List<String> list_bxlx;
@@ -140,7 +139,9 @@ OnClickListener,OnItemClickListener{
 		iv_cancle_search.setOnClickListener(this);
 	}
 	
-	private void initSubtitleMenu(){
+	
+	@Override
+	public void initSubtitleMenu(){
 		iv_up_arrow1.setVisibility(View.GONE);
 		iv_up_arrow2.setVisibility(View.GONE);
 		iv_up_arrow3.setVisibility(View.GONE);
@@ -172,27 +173,29 @@ OnClickListener,OnItemClickListener{
 		    @Override  
 		    public void handleMessage(final Message msg) {  
 		        super.handleMessage(msg);  
-		        dissmissProgressDialog();			       
+		        dissmissProgressDialog();
 		        if(lvSchoolProfile!=null)
 		        	lvSchoolProfile.onRefreshComplete();
-		        
-		        switch (msg.what) {  
-		        case 0://加载schoolList->fail 
-		        	UtilToast.showLong(getActivity(), "fail");
-		        	break;	
-		        case 1:  //加载schoolList->success
-		        	UtilToast.showLong(getActivity(), "success");		       
-		        	mAdapter.setDataList(schoolList);
-		            break;
-		        case 2://加载schoolList-> 空
-		        	if(0 == loadOperation)
-		        		UtilToast.showLong(getActivity(), "没有更多");
-		        	else 
-		        		UtilToast.showLong(getActivity(), "查询结果为空");
-		        	break;
-		        default:  
-		            break;  
-		        } 
+		        if(!isTaskCancled){
+		        	switch (msg.what) {  
+			        case -1://网络问题
+			        	UtilToast.showShort(getActivity(), R.string.net_cannot_used);
+			        	break;
+			        case 0://加载schoolList->fail 
+			        	break;	
+			        case 1:  //加载schoolList->success
+			        	mAdapter.setDataList(schoolList);
+			            break;
+			        case 2://加载schoolList-> 空
+			        	if(0 == loadOperation)
+			        		UtilToast.showShort(getActivity(), "查询结果为空");
+			        	else 
+			        		UtilToast.showShort(getActivity(), "没有更多");
+			        	break;
+			        default:  
+			            break;  
+			        }
+		        }
 		    }
 		};
 		if( null == mController) mController = HttpController.getInstance(getActivity());
@@ -233,14 +236,25 @@ OnClickListener,OnItemClickListener{
 
 	@Override
 	protected void getMoreData() {
-		
+		if(!EnvUtils.isNetworkConnected(getActivity())){
+			Message msg = mHandler.obtainMessage(-1);
+			msg.sendToTarget();
+			return;
+		}
+		isTaskCancled = false;
 		loadOperation = 1;
-		lvSchoolProfile.getLoadingLayoutProxy().setLastUpdatedLabel("正在加载。。。。");
+		lvSchoolProfile.getLoadingLayoutProxy().setLastUpdatedLabel("正在加载...");
 		getSchoolItemsFromServer();
 	}
 
 	@Override
 	public void doSearch() {
+		if(!EnvUtils.isNetworkConnected(getActivity())){
+			UtilToast.showShort(getActivity(), R.string.net_cannot_used);
+			return;
+		}
+		showProgressDialog();
+		isTaskCancled = false;
 		loadOperation = 0;
 		beginAt = 0;
 		if( null != schoolList) schoolList.clear();
@@ -272,6 +286,7 @@ OnClickListener,OnItemClickListener{
 	@Override
 	public void onRefresh(PullToRefreshBase refreshView) {
 		// TODO Auto-generated method stub
+		
 		getMoreData();
 	}
 
@@ -286,12 +301,6 @@ OnClickListener,OnItemClickListener{
 	 * more=1 下拉加载更多
 	 * **/
 	private void getSchoolItemsFromServer(){
-		if(!EnvUtils.isNetworkConnected(getActivity())){
-			UtilToast.showShort(getActivity(), R.string.net_cannot_used);
-			lvSchoolProfile.onRefreshComplete();
-			return;
-		}
-		showProgressDialog();
 		setFilterParam();
 		mController.getSchoolProfileList(getActivity(), this, filter_params);	
 		
@@ -307,7 +316,15 @@ OnClickListener,OnItemClickListener{
 			initSubtitleMenu();
 			return true;
 		}
-		else
+		else if((mLoadingView!=null && mLoadingView.getVisibility() == View.VISIBLE) ||
+				lvSchoolProfile.isRefreshing()){
+			//在加载数据
+			isTaskCancled = true;
+			Message msg = mHandler.obtainMessage(-1);
+			msg.sendToTarget();
+			return true;
+		}
+		else 
 			return false;
 	}
 	
@@ -354,6 +371,7 @@ OnClickListener,OnItemClickListener{
 				this.keyword = "";
 				iv_cancle_search.setVisibility(View.GONE);
 				tv_search.setSelected(false);
+				doSearch();
 			}
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

@@ -138,7 +138,7 @@ public class DetailOfEnrollFragment extends BasicDetailFragment implements OnCli
 	
 
 	@Override
-	public void OnGetImgUrl(String[] imgUrls) {
+	public void OnGetImgUrl(List<String> imgUrls) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -146,7 +146,7 @@ public class DetailOfEnrollFragment extends BasicDetailFragment implements OnCli
 	@Override
 	public void OnGetDetailInfo(boolean isSuccess, Object result) {
 		this.dissmissProgressDialog();
-		if(isSuccess&&null!=result){
+		if(isSuccess){
 			JSONArray resultList = ((JSONArray)result);
 			if(resultList!=null && resultList.length()>0){
 				enrollList = new ArrayList<EnrollEntity>();

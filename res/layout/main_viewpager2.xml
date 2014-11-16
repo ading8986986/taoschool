@@ -170,10 +170,6 @@
     <RelativeLayout
     	android:layout_width="fill_parent"  
         android:layout_height="wrap_content">
-	    <include 
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
-	        layout="@layout/layout_loading"/>
         <LinearLayout
         	android:layout_width="fill_parent"  
         	android:layout_height="fill_parent"
@@ -365,6 +361,12 @@
 	                />
 		    </LinearLayout>
 		</LinearLayout>
+
+		<include
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    layout="@layout/layout_loading"/>
+
     </RelativeLayout>
 </LinearLayout>
 

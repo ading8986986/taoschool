@@ -13,10 +13,10 @@
     <string name="s_type">学校类型:</string>
     <string name="s_address">学校地址:</string>
     <string name="s_office">招生办:</string>
-    <string name="pull_to_refresh_pull_label">Pull to refresh...</string>
-    <string name="pull_to_refresh_release_label">Release to refresh...</string>
-    <string name="pull_to_refresh_refreshing_label">Loading...</string>
-    <string name="pull_to_refresh_tap_label">Tap to refresh...</string>
+    <string name="pull_to_refresh_pull_label">下拉刷新...</string>
+    <string name="pull_to_refresh_release_label">释放刷新...</string>
+    <string name="pull_to_refresh_refreshing_label">正在加载...</string>
+    <string name="pull_to_refresh_tap_label">上拉刷新...</string>
     <string name="more">加载更多</string>
     <string name="no_new_content">暂时没有更多内容了，请看看其他分类吧</string>
     <string name="net_cannot_used">当前网络不可用</string>
@@ -40,6 +40,14 @@
     <string name="enroll_plan">招生计划</string>
     <string name="enroll_record">历年录取</string>
     <string name="major_enroll">专业录取</string>
+    <string name="enroll_part">录取批次:</string>
+    <string name="max_score">最高分:</string>
+    <string name="min_score">最低分:</string>
+    <string name="avg_score">平均分:</string>
+    <string name="major_name">专业名称:</string>
+    <string name="plan_type">计划类型:</string>
+    <string name="system">学制:</string>
+    
     <!-- 淘专业 -->
     <string name="score_hint">请输入您要查的分数范围:</string>
     <string name="score_commit">确定并查询</string>

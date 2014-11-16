@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -64,8 +65,10 @@ OnClickListener{
 	private ExpandMenuAdapter provinceAdapter;
 	private ExpandMenuAdapter firstLevelAdapter;
 	private ExpandMenuAdapter secondLevelAdapter;
-	private int mCurSubTitle = 0;//当前的那个选项Subtitle,0代表全都隐藏
+	//private int mCurSubTitle = 0;//当前的那个选项Subtitle,0代表全都隐藏
 	
+	
+	private boolean isTaskCancled = false;//网络任务没有被用户手动cancle
 	private DBManager dbManager;
 	private HttpController mController;
 	private int downloadImgCount;//已下载图片数
@@ -109,6 +112,8 @@ OnClickListener{
 		iv_cancle_search = (ImageView) parentView.findViewById(R.id.iv_cancel_search);
 		tv_search = (TextView) parentView.findViewById(R.id.iv_search);
 		mLoadingView = parentView.findViewById(R.id.ll_loading);
+//		mLoadingView.setBackgroundColor(Color.RED);
+//		mLoadingView.setVisibility(View.VISIBLE);
 		sub_title1 = (LinearLayout) parentView.findViewById(R.id.sub_title_lable1);
 		sub_title2 = (LinearLayout) parentView.findViewById(R.id.sub_title_lable2);
 		sub_title3 = (LinearLayout) parentView.findViewById(R.id.sub_title_lable3);
@@ -139,7 +144,9 @@ OnClickListener{
 		tvScoreCommit.setOnClickListener(this);
 	}
 	
-	private void initSubtitleMenu(){
+
+	@Override
+	public  void initSubtitleMenu(){
 		iv_up_arrow1.setVisibility(View.GONE);
 		iv_up_arrow2.setVisibility(View.GONE);
 		iv_up_arrow3.setVisibility(View.GONE);
@@ -185,24 +192,28 @@ OnClickListener{
 		        dissmissProgressDialog();			       
 		        if(lvSchoolProfile!=null)
 		        	lvSchoolProfile.onRefreshComplete();
-		        
-		        switch (msg.what) {  
-		        case 0://加载schoolList->fail 
-		        	UtilToast.showLong(getActivity(), "fail");
-		        	break;	
-		        case 1:  //加载schoolList->success
-		        	UtilToast.showLong(getActivity(), "success");		       
-		        	mAdapter.setDataList(schoolList);
-		            break;
-		        case 2://加载schoolList-> 空
-		        	if(0 == loadOperation)
-		        		UtilToast.showLong(getActivity(), "没有更多");
-		        	else 
-		        		UtilToast.showLong(getActivity(), "查询结果为空");
-		        	break;
-		        default:  
-		            break;  
-		        } 
+		        if(!isTaskCancled){
+			        switch (msg.what) {  
+			        
+			        case -1://网络问题
+			        	UtilToast.showShort(getActivity(), R.string.net_cannot_used);
+			        case 0://加载schoolList->fail 
+			        	//UtilToast.showLong(getActivity(), "fail");
+			        	break;	
+			        case 1:  //加载schoolList->success
+			        	//UtilToast.showLong(getActivity(), "success");		       
+			        	mAdapter.setDataList(schoolList);
+			            break;
+			        case 2://加载schoolList-> 空
+			        	if(0 == loadOperation)
+			        		UtilToast.showShort(getActivity(), "查询结果为空");
+			        	else 
+			        		UtilToast.showShort(getActivity(), "没有更多");
+			        	break;
+			        default:  
+			            break;  
+			        } 
+		        }
 		    }
 		};
 	}
@@ -237,8 +248,12 @@ OnClickListener{
 
 	@Override
 	public void onRefresh(PullToRefreshBase refreshView) {
+//		if(!EnvUtils.isNetworkConnected(getActivity())){
+//			Message msg = mHandler.obtainMessage(-1);
+//			msg.sendToTarget();
+//			return;
+//		}
 		getMoreData();
-		
 	}
 
 	@Override
@@ -260,7 +275,12 @@ OnClickListener{
 
 	@Override
 	protected void getMoreData() {
-		
+		if(!EnvUtils.isNetworkConnected(getActivity())){
+			Message msg = mHandler.obtainMessage(-1);
+			msg.sendToTarget();
+			return;
+		}
+		isTaskCancled = false;
 		loadOperation = 1;
 		lvSchoolProfile.getLoadingLayoutProxy().setLastUpdatedLabel("正在加载。。。。");
 		getSchoolItemsFromServer();
@@ -268,6 +288,12 @@ OnClickListener{
 
 	@Override
 	public void doSearch() {
+		if(!EnvUtils.isNetworkConnected(getActivity())){
+			UtilToast.showShort(getActivity(), R.string.net_cannot_used);
+			return;
+		}
+		showProgressDialog();
+		isTaskCancled = false;
 		loadOperation = 0;
 		beginAt = 0;
 		if( null != schoolList) schoolList.clear();
@@ -299,13 +325,7 @@ OnClickListener{
 	 * more=1 下拉加载更多
 	 * **/
 	private void getSchoolItemsFromServer(){
-		if(!EnvUtils.isNetworkConnected(getActivity())){
-			UtilToast.showShort(getActivity(), R.string.net_cannot_used);
-			lvSchoolProfile.onRefreshComplete();
-			
-			return;
-		}
-		showProgressDialog();
+		
 		setFilterParam();
 		mController.getSchoolProfileList(getActivity(), this, filter_params);			
 	}
@@ -318,6 +338,14 @@ OnClickListener{
 		if( 0 != mCurSubTitle){
 			mCurSubTitle = 0;
 			initSubtitleMenu();
+			return true;
+		}
+		else if((mLoadingView!=null && mLoadingView.getVisibility() == View.VISIBLE) ||
+				lvSchoolProfile.isRefreshing()){
+			//在加载数据
+			isTaskCancled = true;
+			Message msg = mHandler.obtainMessage(-1);
+			msg.sendToTarget();
 			return true;
 		}
 		else
@@ -348,8 +376,9 @@ OnClickListener{
 	@Override
 	public void afterTextChanged(Editable s) {
 		try {
+			this.keyword = new String(s.toString().trim().getBytes(),"UTF-8");
 			if(!("".equals(s.toString().trim()))){
-				this.keyword = new String(s.toString().trim().getBytes(),"UTF-8");
+				//this.keyword = new String(s.toString().trim().getBytes(),"UTF-8");
 				iv_cancle_search.setVisibility(View.VISIBLE);
 				tv_search.setSelected(true);
 			}
@@ -357,6 +386,7 @@ OnClickListener{
 				this.keyword = "";
 				iv_cancle_search.setVisibility(View.GONE);
 				tv_search.setSelected(false);
+				doSearch();
 			}
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

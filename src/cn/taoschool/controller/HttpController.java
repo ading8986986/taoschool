@@ -20,7 +20,7 @@ import cn.taoschool.taoSchoolApplication;
 import cn.taoschool.bean.SchoolItem;
 import cn.taoschool.cache.AsyncImageLoader;
 import cn.taoschool.cache.AsyncImageLoader.ImageCallback;
-import cn.taoschool.listener.IDetailActivityReqListener;
+import cn.taoschool.listener.IDetailActivityFragmentListener;
 import cn.taoschool.listener.IMainActivityReqListener;
 import cn.taoschool.pulltorefresh.library.internal.Utils;
 import cn.taoschool.util.Constants;
@@ -43,6 +43,7 @@ public class HttpController {
 	public static Context ctx;
 	public static String url_school_profile = "schoollist";
 	public static String url_school_detail = "getcolinf";
+	
 	private taoSchoolApplication app;
 	private static HttpController mController;
 	private AsyncHttpClient mClient = null;	
@@ -147,6 +148,7 @@ public class HttpController {
 				});
 		RequestManager.getInstance(context.getApplicationContext())
         .addToRequestQueue(getSchoolProfileReq, TAG);
+		
 	}
 		
 	public void getSchoolProfileImages(final IMainActivityReqListener listener,final List<SchoolItem> list){
@@ -189,16 +191,16 @@ public class HttpController {
 		}
 	}
 	
-	public void getSchoolDetail(Context ctx,final IDetailActivityReqListener listener,int schoolID){
+	public void getSchoolDetail(Context ctx,final IDetailActivityFragmentListener listener,int schoolID){
 		//mlistener = listener;
 		
 		String url = Constants.SERVER_IP + url_school_detail + "?colid=" + schoolID;
-		JsonObjectRequest getSchoolDetailReq = new JsonObjectRequest(Method.GET, url, null, getDetailSuccess(listener), getDetailFail(listener));
+		JsonObjectRequest getSchoolDetailReq = new JsonObjectRequest(Method.GET, url, null, getDetailSuccess(listener), getDetailInfoFail(listener));
 		RequestManager.getInstance(ctx.getApplicationContext())
         .addToRequestQueue(getSchoolDetailReq, TAG);
 	}
 	
-	private Listener<JSONObject> getDetailSuccess(final IDetailActivityReqListener listener){
+	private Listener<JSONObject> getDetailSuccess(final IDetailActivityFragmentListener listener){
 		Listener<JSONObject> successListener = new Listener<JSONObject>() {
 
 			@Override
@@ -240,24 +242,10 @@ public class HttpController {
 		return successListener;
 	}
 	
-	private ErrorListener getDetailFail(final IDetailActivityReqListener listener){
-		ErrorListener failListener = new ErrorListener(){
-
-			@Override
-			public void onErrorResponse(VolleyError response) {
-				// TODO Auto-generated method stub
-				if(null != listener){
-					listener.OnGetDetailInfo(false, null);
-					Log.d(TAG,response.toString());
-					return;
-				}
-			}
-			
-		};
-		return failListener;			
-	}
-	
-	public void getDetailEnrollInfo(Context ctx,final IDetailActivityReqListener listener,Map param){
+	/**
+	 * 获取详情页历年记录信息
+	 * **/
+	public void getDetailEnrollInfo(Context ctx,final IDetailActivityFragmentListener listener,Map param){
 		
 		String url = Constants.DETAIL_ENROLL_INFO + 
 				"?province=" + param.get("province")+
@@ -266,12 +254,13 @@ public class HttpController {
 				"&year=" + param.get("year")+
 				"&pcid=" + param.get("pcid");
 				
-		JsonObjectRequest getDetailEnrollInfoReq = new JsonObjectRequest(Method.GET, url, null, getDetailEnrollInfoSuccess(listener), getDetailEnrollInfoFail(listener));
+		JsonObjectRequest getDetailEnrollInfoReq = new JsonObjectRequest(Method.GET, url, null, getDetailEnrollInfoSuccess(listener), 
+				getDetailInfoFail(listener));
 		RequestManager.getInstance(ctx.getApplicationContext())
 	    .addToRequestQueue(getDetailEnrollInfoReq, TAG);
 	}
 	
-	private Listener<JSONObject> getDetailEnrollInfoSuccess(final IDetailActivityReqListener listener){
+	private Listener<JSONObject> getDetailEnrollInfoSuccess(final IDetailActivityFragmentListener listener){
 		Listener<JSONObject> successListener = new Listener<JSONObject>() {
 
 			@Override
@@ -313,23 +302,143 @@ public class HttpController {
 		return successListener;
 	}
 
-	private ErrorListener getDetailEnrollInfoFail(final IDetailActivityReqListener listener){
-		ErrorListener failListener = new ErrorListener(){
 
-			@Override
-			public void onErrorResponse(VolleyError response) {
-				// TODO Auto-generated method stub
-				if(null != listener){
-					listener.OnGetDetailInfo(false, null);
-					Log.d(TAG,response.toString());
+	
+	/**
+	 * 获取详情页专业录取信息
+	 * **/
+public void getDetailMajorEnroll(Context ctx,final IDetailActivityFragmentListener listener,Map param){
+		
+		String url = Constants.DETAIL_MAJOR_ENROLL + 
+				"?province=" + param.get("province")+
+				"&colid=" + param.get("colid")+
+				"&klid=" + param.get("klid")+
+				"&year=" + param.get("year");
+				
+		JsonObjectRequest getDetailMajorEnrollReq = new JsonObjectRequest(Method.GET, url, null, getDetailMajorEnrollSuccess(listener), getDetailInfoFail(listener));
+		RequestManager.getInstance(ctx.getApplicationContext())
+	    .addToRequestQueue(getDetailMajorEnrollReq, TAG);
+	}
+
+private Listener<JSONObject> getDetailMajorEnrollSuccess(final IDetailActivityFragmentListener listener){
+	Listener<JSONObject> successListener = new Listener<JSONObject>() {
+
+		@Override
+		public void onResponse(JSONObject json) {
+			// TODO Auto-generated method stub
+			if(json!=null){
+				int respCode = json.optInt("respCode");
+				if(200 == respCode){
+					try {
+						JSONArray jsonList = json.optJSONArray("zylqxxlist");
+						if(listener!=null){
+							listener.OnGetDetailInfo(true, jsonList);
+							return;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						if(listener!=null){
+							listener.OnGetDetailInfo(true, null);
+							return;
+						}
+					}
+					
+				}
+				else{
+					if(listener != null ){
+						listener.OnGetDetailInfo(false,null);
+						return;
+					}
+				}
+			}
+			else{
+				if(listener != null ){
+					listener.OnGetDetailInfo(false,null);
 					return;
 				}
 			}
-			
-		};
-		return failListener;			
-	}
+		}
+	};
+	return successListener;
+}
 
+
+/**
+ * 获取详情招生计划信息
+ * **/
+public void getDetailEnrollPlan(Context ctx,final IDetailActivityFragmentListener listener,Map param){
+	
+	String url = Constants.DETAIL_ENROLL_PLAN + 
+			"?province=" + param.get("province")+
+			"&colid=" + param.get("colid")+
+			"&year=" + param.get("year");
+			
+	JsonObjectRequest getDetailEnrollPlanReq = new JsonObjectRequest(Method.GET, url, null, getDetailEnrollPlanSuccess(listener), getDetailInfoFail(listener));
+	RequestManager.getInstance(ctx.getApplicationContext())
+    .addToRequestQueue(getDetailEnrollPlanReq, TAG);
+}
+
+private Listener<JSONObject> getDetailEnrollPlanSuccess(final IDetailActivityFragmentListener listener){
+	Listener<JSONObject> successListener = new Listener<JSONObject>() {
+
+		@Override
+		public void onResponse(JSONObject json) {
+			// TODO Auto-generated method stub
+			if(json!=null){
+				int respCode = json.optInt("respCode");
+				if(200 == respCode){
+					try {
+						JSONArray jsonList = json.optJSONArray("zsjhlist");
+						if(listener!=null){
+							listener.OnGetDetailInfo(true, jsonList);
+							return;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						if(listener!=null){
+							listener.OnGetDetailInfo(true, null);
+							return;
+						}
+					}
+					
+				}
+				else{
+					if(listener != null ){
+						listener.OnGetDetailInfo(false,null);
+						return;
+					}
+				}
+			}
+			else{
+				if(listener != null ){
+					listener.OnGetDetailInfo(false,null);
+					return;
+				}
+			}
+		}
+	};
+	return successListener;
+}
+
+
+private ErrorListener getDetailInfoFail(final IDetailActivityFragmentListener listener){
+	ErrorListener failListener = new ErrorListener(){
+
+		@Override
+		public void onErrorResponse(VolleyError response) {
+			// TODO Auto-generated method stub
+			if(null != listener){
+				listener.OnGetDetailInfo(false, null);
+				Log.d(TAG,response.toString());
+				return;
+			}
+		}
+		
+	};
+	return failListener;			
+}
+	
+	
 	public void checkVersion(final Context context, final IMainActivityReqListener listener){
 		
 		String url = Constants.DOWNLOAD_PATH;

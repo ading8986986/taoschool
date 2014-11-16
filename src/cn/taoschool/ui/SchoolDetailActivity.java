@@ -5,13 +5,18 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+
 import cn.taoschool.R;
 import cn.taoschool.R.layout;
+import cn.taoschool.adapter.BigImageViewPagerAdapter;
 import cn.taoschool.adapter.DetailActivityViewPagerAdapter;
 import cn.taoschool.bean.SchoolItem;
 import cn.taoschool.cache.AsyncImageLoader;
 import cn.taoschool.controller.HttpController;
-import cn.taoschool.listener.IDetailActivityReqListener;
+import cn.taoschool.listener.IDetailActivityFragmentListener;
 import cn.taoschool.listener.IMainActivityReqListener;
 import cn.taoschool.ui.fragment.BasicDetailFragment;
 import cn.taoschool.ui.fragment.DetailOfEnrollFragment;
@@ -42,10 +47,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class SchoolDetailActivity extends FragmentActivity implements OnClickListener, OnPageChangeListener
-,IDetailActivityReqListener{
+,IDetailActivityFragmentListener{
 
 	private String TAG = SchoolDetailActivity.class.getName();
 	private int mCurPage = 0;// 当前页卡编号
@@ -54,17 +60,20 @@ public class SchoolDetailActivity extends FragmentActivity implements OnClickLis
 	
 	private TextView tv_schoolname;
 	private ImageView iv_iscomfirm,iv_is985,iv_is211;
-	private ImageView iv_big_image;
+	private ViewPager vpBigImages;
 	private ViewPager mViewPager;
 	private DetailActivityViewPagerAdapter mAdapter;
+	private BigImageViewPagerAdapter mImageViewPagerAdapter;//顶部图像的image切换
 	private ImageView iv_back;
 	private TextView tv_sub_title1,tv_sub_title2,tv_sub_title3,tv_sub_title4;
 	private TextView tv_more;
+	private LinearLayout ImagebottomView;//
 	
-	private DetailOfSchoolFragment detailOfSchoolProfileFragment;
-	private AsyncImageLoader loader; 
+	//private AsyncImageLoader loader; 
 	private Handler mHandler;
 	private static int schoolID;
+	private List<String> imageUrlList;
+	
 	private SchoolItem curSchoolItem;
 
 	
@@ -74,9 +83,8 @@ public class SchoolDetailActivity extends FragmentActivity implements OnClickLis
 		setContentView(R.layout.activity_school_detail);
 		initView();
 		initData();
-		initViewPager();
+		initMainViewPager();
 		updateSubTitleSel();
-		
 	}
 	
 	
@@ -86,13 +94,15 @@ public class SchoolDetailActivity extends FragmentActivity implements OnClickLis
 		iv_iscomfirm = (ImageView)findViewById(R.id.iv_iscomfirm);
 		iv_is985 = (ImageView)findViewById(R.id.iv_is985);
 		iv_is211 = (ImageView)findViewById(R.id.iv_is211);
-		iv_big_image = (ImageView)findViewById(R.id.iv_big_image);
+		vpBigImages = (ViewPager)findViewById(R.id.vp_big_img);
+		ImagebottomView = (LinearLayout)findViewById(R.id.ll_bottom_circle);
 		tv_sub_title1 = (TextView)findViewById(R.id.tv_sub_title1);
 		tv_sub_title2 = (TextView)findViewById(R.id.tv_sub_title2);
 		tv_sub_title3 = (TextView)findViewById(R.id.tv_sub_title3);
 		tv_sub_title4 = (TextView)findViewById(R.id.tv_sub_title4);
 		tv_more = (TextView)findViewById(R.id.tv_more);
 		mViewPager = (ViewPager)findViewById(R.id.vp_content);
+		
 		iv_back = (ImageView)findViewById(R.id.iv_back);
 		tv_sub_title1.setOnClickListener(this);
 		tv_sub_title2.setOnClickListener(this);
@@ -100,25 +110,13 @@ public class SchoolDetailActivity extends FragmentActivity implements OnClickLis
 		tv_sub_title4.setOnClickListener(this);
 		tv_more.setOnClickListener(this);
 		iv_back.setOnClickListener(this);
-		
 	}
 
 	private void initData(){
-		mHandler = new Handler(){
-			 @SuppressLint("NewApi")
-			@Override
-		        public void handleMessage(Message msg) {
-				if(msg.what == 0){//图片下载失败
-					iv_big_image.setBackgroundResource(R.drawable.detail1);
-				}
-				else if(msg.what == 1){
-					BitmapDrawable drawable = new BitmapDrawable(getResources(),(Bitmap) msg.obj);
-					iv_big_image.setBackground(drawable);
-				}
-			 }
-		};
+		
 		mCurPage = getIntent().getIntExtra("mCurPage",0);	
 		schoolID = getIntent().getIntExtra("schoolID",0);
+		
 	}
 	
 	private void updateSubTitleSel(){
@@ -138,7 +136,42 @@ public class SchoolDetailActivity extends FragmentActivity implements OnClickLis
 		}
 	}
 	
-	public void initViewPager(){
+	public void initTopImageViewPager(List<String> imageUrlList){
+		//this.imageUrlList = imageUrlList;
+		this.imageUrlList = new ArrayList<String>();
+		String imgUrl1 = Constants.DETAIL_IMG_PATH + schoolID + "/" + 1 +".jpg";
+		String imgUrl2 = Constants.DETAIL_IMG_PATH + schoolID + "/" + 2 +".jpg";
+		String imgUrl3 = Constants.DETAIL_IMG_PATH + schoolID + "/" + 3 +".jpg";
+		Log.i(TAG, "imgUrl1="+imgUrl1);
+		this.imageUrlList.add(imgUrl1);
+		this.imageUrlList.add(imgUrl2);
+		this.imageUrlList.add(imgUrl3);
+		mImageViewPagerAdapter = new BigImageViewPagerAdapter(this, this.imageUrlList, ImagebottomView);
+		vpBigImages.setAdapter(mImageViewPagerAdapter);
+		setBottomCircle(0);
+		vpBigImages.setOnPageChangeListener(new OnPageChangeListener() {
+			
+			@Override
+			public void onPageSelected(int position) {
+				setBottomCircle(position);
+			}
+			
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+	}
+	
+	public void initMainViewPager(){
 		mFragments = new ArrayList<BasicDetailFragment>();
 		DetailOfSchoolFragment fragmentDetail = new DetailOfSchoolFragment(this);
 		DetailOfEnrollFragment fragmentEnrollHistory = new DetailOfEnrollFragment();
@@ -160,41 +193,63 @@ public class SchoolDetailActivity extends FragmentActivity implements OnClickLis
 		return schoolID;
 	}
 	
-	private void getImages(String[] imageNames,int id){
-		if( null == loader ){
-			loader = new AsyncImageLoader(this);
-			}
-			//将图片缓存至外部文件中  
-		    loader.setCache2File(false); //false  
-		    //设置外部缓存文件夹  
-		    loader.setCachedDir(getCacheDir().getAbsolutePath());
-		    //String imgUrl = Constants.detailImgPath + schoolID + "/" + schoolID +".jpg";
-		    String imgUrl = Constants.DETAIL_IMG_PATH + "/1.jpg";
-		    Log.i("TAG",imgUrl);
-		    loader.downloadImage(imgUrl, false, new AsyncImageLoader.ImageCallback() {
-				
-				@SuppressLint("NewApi")
-				@Override
-				public void onImageLoaded(Bitmap bitmap, String imageUrl) {
-					// TODO Auto-generated method stub		
-					/*int width = iv_big_image.getWidth();
-					LayoutParams para = iv_big_image.getLayoutParams();
-					para.height = width*250/640;
-					iv_big_image.setLayoutParams(para);*/
-					if(bitmap!=null){
-						Message msg = mHandler.obtainMessage();
-						msg.what = 1;
-						msg.obj = bitmap;
-						mHandler.sendMessage(msg);						
-					}
-					else{
-						mHandler.sendEmptyMessage(0);
-						iv_big_image.setBackgroundResource(R.drawable.detail1);
-					}
-				}
-			});
-		
+	/**
+	 * 处理小圆点
+	 * **/
+	public void setBottomCircle(int position){
+		ImagebottomView.removeAllViews();
+		if(imageUrlList.size() == 1){//大于1才需要小圆点示意切换 
+			ImagebottomView.setVisibility(View.GONE);
+		}
+		else {
+			for(int i = 0;i<imageUrlList.size();i++){
+				ImageView circle = new ImageView(this);
+				LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+				param.setMargins(5, 0, 5, 0);
+				circle.setLayoutParams(param);
+				circle.setBackgroundResource(R.drawable.bottom_circle);		
+				if(i == position) circle.setSelected(true);
+				ImagebottomView.addView(circle);
+			}	
+		}
 	}
+	
+//	private void getImages(String[] imageNames,int id){
+//		if( null == loader ){
+//			loader = new AsyncImageLoader(this);
+//			}
+//			//将图片缓存至外部文件中  
+//		    loader.setCache2File(false); //false  
+//		    //设置外部缓存文件夹  
+//		    loader.setCachedDir(getCacheDir().getAbsolutePath());
+//		    //String imgUrl = Constants.detailImgPath + schoolID + "/" + schoolID +".jpg";
+//		    String imgUrl = Constants.DETAIL_IMG_PATH + "/1.jpg";
+//		    Log.i("TAG",imgUrl);
+//		    loader.downloadImage(imgUrl, false, new AsyncImageLoader.ImageCallback() {
+//				
+//				@SuppressLint("NewApi")
+//				@Override
+//				public void onImageLoaded(Bitmap bitmap, String imageUrl) {
+//					// TODO Auto-generated method stub		
+//					/*int width = iv_big_image.getWidth();
+//					LayoutParams para = iv_big_image.getLayoutParams();
+//					para.height = width*250/640;
+//					iv_big_image.setLayoutParams(para);*/
+//					if(bitmap!=null){
+//						Message msg = mHandler.obtainMessage();
+//						msg.what = 1;
+//						msg.obj = bitmap;
+//						mHandler.sendMessage(msg);						
+//					}
+//					else{
+//						mHandler.sendEmptyMessage(0);
+//						iv_big_image.setBackgroundResource(R.drawable.detail1);
+//					}
+//				}
+//			});
+		
+		
+//	}
 
 	@Override
 	public void onClick(View v){
@@ -263,14 +318,15 @@ public class SchoolDetailActivity extends FragmentActivity implements OnClickLis
 
 
 	@Override
-	public void OnGetImgUrl(String[] imgUrls) {
+	public void OnGetImgUrl(List<String> imgUrls) {
 		// TODO Auto-generated method stub
-		getImages(imgUrls,schoolID);
+		initTopImageViewPager(imgUrls);
 	}
 
 	@Override
 	public void OnGetDetailInfo(boolean isSuccess, Object result) {
-		// TODO Auto-generated method stub
+		if(null == result) return;
+
 		tv_schoolname.setText(((JSONObject) result).optString("colname"));
 		if(!((JSONObject) result).optBoolean("is211")) iv_is211.setVisibility(View.GONE);
 		if(!((JSONObject) result).optBoolean("is985")) iv_is985.setVisibility(View.GONE);

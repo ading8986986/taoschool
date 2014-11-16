@@ -74,18 +74,26 @@
                   />
         </LinearLayout>
     </RelativeLayout>
-   
    <RelativeLayout 
-       android:layout_width="fill_parent"
-       android:layout_height="wrap_content"
-       >
-       <ImageView
-           android:id="@+id/iv_big_image" 
-	       android:layout_width="fill_parent"
-	       android:layout_height="100dp"
-	       android:background="@color/white"
-       />       
+       android:layout_width="match_parent"
+       android:layout_height="100dp">
+       <android.support.v4.view.ViewPager
+	        android:id="@+id/vp_big_img"       
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:flipInterval="30"
+	        android:persistentDrawingCache="animation" />
+       <LinearLayout 
+	        android:id="@+id/ll_bottom_circle"
+	        android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:padding="5dp"
+			android:orientation="horizontal"
+			android:gravity="center"
+			android:layout_alignParentBottom="true"	
+	        ></LinearLayout>
    </RelativeLayout>
+   
    <LinearLayout 
       	android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
@@ -165,6 +173,7 @@
 	        android:id="@+id/vp_content"       
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
+			android:padding="@dimen/detail_activity_padding"
 			android:layout_above="@id/tv_more"
 	        android:flipInterval="30"
 	        android:persistentDrawingCache="animation" />

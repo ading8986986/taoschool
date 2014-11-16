@@ -41,7 +41,7 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 	private RadioGroup rbPreference;
 	
 	private String[] deviations = new String[]{"0","±5","±10","±15"};
-	private String[] branchs = new String[]{"理科","文科"};
+	private String[] branchs = new String[]{"文科","理科"};
 	
 	//需要传递给server的参数
 	private String studentProvince;
@@ -304,6 +304,12 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public void initSubtitleMenu() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

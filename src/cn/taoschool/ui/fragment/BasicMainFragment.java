@@ -18,11 +18,17 @@ OnRefreshListener{
 	protected Context mContext;
 	protected JSONObject filter_params;
 	protected View mLoadingView;
+	protected int mCurSubTitle = 0;////当前的那个选项Subtitle,0代表全都隐藏
 	abstract public void  getData();
 	abstract protected void getMoreData();
 	abstract public void doSearch();
 	abstract public void setFilterParam();
 	abstract public boolean onReturnAction();
+	abstract public void initSubtitleMenu();
+	public void initSubtitleMenu(int mCurSubTitle){
+		this.mCurSubTitle = mCurSubTitle;
+		initSubtitleMenu();
+	}
 	
 	/**
 	 * 显示进度框
@@ -38,5 +44,7 @@ OnRefreshListener{
 	protected void dissmissProgressDialog() {
 		if(mLoadingView != null)
 			mLoadingView.setVisibility(View.GONE);	}
+	
+	
 }
 

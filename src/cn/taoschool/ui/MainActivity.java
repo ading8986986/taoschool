@@ -202,8 +202,7 @@ OnPageChangeListener,OnClickListener
 
 
 	@Override
-	public void onPageScrollStateChanged(int arg0) {
-		// TODO Auto-generated method stub
+	public void onPageScrollStateChanged(int position) {
 		
 	}
 
@@ -216,10 +215,11 @@ OnPageChangeListener,OnClickListener
 
 
 	@Override
-	public void onPageSelected(int CurPage) {
+	public void onPageSelected(int position) {
 		// TODO Auto-generated method stub
-		mCurPage = CurPage;
+		mCurPage = position;
 		updateTitleSel();
+		mFragments.get(position).initSubtitleMenu(0);
 	}
 
 	
