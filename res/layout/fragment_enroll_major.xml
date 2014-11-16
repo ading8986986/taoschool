@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"  
+    android:paddingTop="@dimen/detail_activity_padding_ud" 
+    android:paddingBottom="@dimen/detail_activity_padding_ud">
+    
+    <include 
+        layout="@layout/common_title_in_detail"></include>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/gray_divider"/>
+    <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        >
+        <include 
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           layout="@layout/layout_loading"/>
+        <ListView 
+	        android:id="@+id/lv_enroll_major"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:dividerHeight="1px"
+			android:divider="@color/gray_divider"
+	        android:layout_marginBottom="@dimen/detail_activity_padding"
+	        >	        
+	    </ListView>
+	    
+	    <ListView 
+	        android:id="@+id/lv_filter"
+	        android:layout_height="wrap_content"
+	        android:layout_width="fill_parent"	
+	        android:padding="1dp"        
+	        android:background="@drawable/rect_gray"
+            android:divider="@null"
+            android:visibility="gone"
+            >	        
+	    </ListView>
+        
+    </RelativeLayout>
+    
+</LinearLayout>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    android:orientation="vertical" >
+    
+    <TextView
+		android:id="@+id/tv_plan_name"
+		android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+         android:textColor="@color/gray_more"
+         android:textSize="@dimen/font_size_28px"
+         android:layout_marginBottom="5dp"
+         />
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+        <LinearLayout 
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp"
+            android:orientation="horizontal">
+            <TextView 
+			    
+			    android:layout_width="@dimen/enroll_major_list_item_option"
+			    android:layout_height="wrap_content"
+			    android:text="@string/xlcc"
+			    android:textColor="@color/gray_less"
+			    android:textSize="@dimen/font_size_26px"/>
+            <TextView 
+                android:id="@+id/tv_level"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:textColor="@color/gray_font"
+			    android:textSize="@dimen/font_size_26px"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="@dimen/enroll_major_list_item_option"
+                android:layout_height="wrap_content"
+                android:text="@string/system"
+                android:textColor="@color/gray_less"
+                android:textSize="@dimen/font_size_26px" />
+            <TextView
+                android:id="@+id/tv_system"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="5.87"
+                android:textColor="@color/gray_font"
+                android:textSize="@dimen/font_size_26px" />
+        </LinearLayout>
+
+        
+    </LinearLayout>
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+        <LinearLayout 
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp"
+            android:orientation="horizontal">
+            <TextView 
+			    android:layout_width="@dimen/enroll_major_list_item_option"
+			    android:layout_height="wrap_content"
+			    android:text="@string/plan_type"
+			    android:textColor="@color/gray_less"
+			    android:textSize="@dimen/font_size_26px"/>
+            <TextView 
+                android:id="@+id/tv_plan_type"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:text="550"
+			    android:textColor="@color/gray_font"
+			    android:textSize="@dimen/font_size_26px"/>
+        </LinearLayout>
+        <LinearLayout 
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp"
+            android:orientation="horizontal">
+            <TextView 
+			    android:layout_width="@dimen/enroll_major_list_item_option"
+			    android:layout_height="wrap_content"
+			    android:text="@string/student_branch"
+			    android:textColor="@color/gray_less"
+			    android:textSize="@dimen/font_size_26px"/>
+            <TextView 
+                android:id="@+id/tv_branch"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:text="500"
+			    android:textColor="@color/gray_font"
+			    android:textSize="@dimen/font_size_26px"/>
+        </LinearLayout>
+    </LinearLayout>
+	
+	
+</LinearLayout>
