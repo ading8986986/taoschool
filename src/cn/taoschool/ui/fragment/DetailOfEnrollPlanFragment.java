@@ -53,7 +53,7 @@ public class DetailOfEnrollPlanFragment extends BasicDetailFragment implements O
 	
 	private int mCurFilter = 0;
 	private int province = 0;
-	private int klid = 0;//科类型（1 文 2 理 3综合）
+	private int klid = 1;//科类型（1 文 2 理 3综合）
 	private int year = Integer.parseInt(FinalDataUitl.getCurrentYear());
 	private List<String> provinceList;
 	
@@ -202,7 +202,7 @@ public class DetailOfEnrollPlanFragment extends BasicDetailFragment implements O
 			break;
 		case 3:
 			tvBranch.setText(FinalDataUitl.getBranchByid(position));
-			klid = position;
+			klid = position+1;
 			filterBranchAdapter.setItemSelect(position, true);
 			break;
 		default:

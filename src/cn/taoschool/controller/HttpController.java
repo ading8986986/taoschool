@@ -195,6 +195,7 @@ public class HttpController {
 		//mlistener = listener;
 		
 		String url = Constants.SERVER_IP + url_school_detail + "?colid=" + schoolID;
+		Log.i(TAG,url);
 		JsonObjectRequest getSchoolDetailReq = new JsonObjectRequest(Method.GET, url, null, getDetailSuccess(listener), getDetailInfoFail(listener));
 		RequestManager.getInstance(ctx.getApplicationContext())
         .addToRequestQueue(getSchoolDetailReq, TAG);
@@ -211,6 +212,7 @@ public class HttpController {
 					if(200 == respCode){
 						try {
 							JSONObject detailJsonObject = (JSONObject) json.opt("colinf");
+							Log.i(TAG, json.toString());
 							if(listener!=null){
 								listener.OnGetDetailInfo(true, detailJsonObject);
 								return;
@@ -253,6 +255,7 @@ public class HttpController {
 				"&klid=" + param.get("klid")+
 				"&year=" + param.get("year")+
 				"&pcid=" + param.get("pcid");
+		Log.i(TAG,url);
 				
 		JsonObjectRequest getDetailEnrollInfoReq = new JsonObjectRequest(Method.GET, url, null, getDetailEnrollInfoSuccess(listener), 
 				getDetailInfoFail(listener));
@@ -271,6 +274,7 @@ public class HttpController {
 					if(200 == respCode){
 						try {
 							JSONArray jsonList = json.optJSONArray("lqxxlist");
+							Log.i(TAG, json.toString());
 							if(listener!=null){
 								listener.OnGetDetailInfo(true, jsonList);
 								return;
@@ -314,7 +318,7 @@ public void getDetailMajorEnroll(Context ctx,final IDetailActivityFragmentListen
 				"&colid=" + param.get("colid")+
 				"&klid=" + param.get("klid")+
 				"&year=" + param.get("year");
-				
+		Log.i(TAG,url);	
 		JsonObjectRequest getDetailMajorEnrollReq = new JsonObjectRequest(Method.GET, url, null, getDetailMajorEnrollSuccess(listener), getDetailInfoFail(listener));
 		RequestManager.getInstance(ctx.getApplicationContext())
 	    .addToRequestQueue(getDetailMajorEnrollReq, TAG);
@@ -327,6 +331,7 @@ private Listener<JSONObject> getDetailMajorEnrollSuccess(final IDetailActivityFr
 		public void onResponse(JSONObject json) {
 			// TODO Auto-generated method stub
 			if(json!=null){
+				Log.i(TAG, json.toString());
 				int respCode = json.optInt("respCode");
 				if(200 == respCode){
 					try {
@@ -370,9 +375,10 @@ public void getDetailEnrollPlan(Context ctx,final IDetailActivityFragmentListene
 	
 	String url = Constants.DETAIL_ENROLL_PLAN + 
 			"?province=" + param.get("province")+
+			"&klid=" + param.get("klid")+
 			"&colid=" + param.get("colid")+
 			"&year=" + param.get("year");
-			
+	Log.i(TAG,url);		
 	JsonObjectRequest getDetailEnrollPlanReq = new JsonObjectRequest(Method.GET, url, null, getDetailEnrollPlanSuccess(listener), getDetailInfoFail(listener));
 	RequestManager.getInstance(ctx.getApplicationContext())
     .addToRequestQueue(getDetailEnrollPlanReq, TAG);
@@ -385,6 +391,7 @@ private Listener<JSONObject> getDetailEnrollPlanSuccess(final IDetailActivityFra
 		public void onResponse(JSONObject json) {
 			// TODO Auto-generated method stub
 			if(json!=null){
+				Log.i(TAG, json.toString());
 				int respCode = json.optInt("respCode");
 				if(200 == respCode){
 					try {

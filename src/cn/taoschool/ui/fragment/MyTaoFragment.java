@@ -45,13 +45,13 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 	
 	//需要传递给server的参数
 	private String studentProvince;
-	private String schoolProvince;
-	private String schoolType;
-	private String schoolSystem;
-	private String firstLevelMajor;
-	private String secondLevelMajor;
-	private String preference;
-	private int studentScore;
+	private String schoolProvince="0";
+	private String schoolType="0";
+	private String schoolSystem="0";
+	private String firstLevelMajor="0";
+	private String secondLevelMajor="0";
+	private String preference="0";
+	private String studentScore;
 	private int scoreDeviation = 5;
 	private int branch = 0;
 	private int beginAt = 0;
@@ -146,14 +146,24 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 
 	@Override
 	public void doSearch() {
+//		getAllParams();
 		if(TextUtils.isEmpty(etStudentScore.getText())){
 			UtilToast.showShort(getActivity(), R.string.no_score_hint);
 			return;
 		}
-		else{
-			studentScore = Integer.parseInt(etStudentScore.getText().toString());
+		if(TextUtils.isEmpty(this.studentProvince)||"0".equals(this.studentProvince)){
+			UtilToast.showShort(getActivity(), R.string.no_province_hint);
+			return;
 		}
 		setFilterParam();
+	}
+	
+	private void getAllParams(){
+		 studentProvince = tvStudentLocation.getText().toString();
+		 schoolProvince = tvSchoolLocation.getText().toString();
+		 schoolType = tvSchoolType.getText().toString();
+		 schoolSystem = tvSchoolSystem.getText().toString();
+		 studentScore=etStudentScore.getText().toString();
 	}
 
 	@Override

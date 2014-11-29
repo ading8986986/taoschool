@@ -81,7 +81,7 @@ OnClickListener{
 	private String firstLevelMajor = "0";
 	private String secondLevelMajor = "0";
 	private int lowScore = 0;
-	private int hightScore = 0;
+	private int highScore = 0;
 	private String keyword = "";
 	
 	private int beginAt;
@@ -309,7 +309,7 @@ OnClickListener{
 			filter_params.put("firstLevelMajor",this.firstLevelMajor);
 			filter_params.put("secondLevelMajor", this.secondLevelMajor);
 			filter_params.put("lowScore",this.lowScore);
-			filter_params.put("hightScore",this.hightScore);
+			filter_params.put("highScore",this.highScore);
 			filter_params.put("keyword", this.keyword);
 			filter_params.put("beginAt", this.beginAt);
 			Log.i("TAG","fileterParam="+filter_params.toString());
@@ -466,7 +466,7 @@ OnClickListener{
 				}
 				else{
 					lowScore = Integer.parseInt(etLowScore.getText().toString().trim());
-					hightScore = Integer.parseInt(etHighScore.getText().toString().trim());
+					highScore = Integer.parseInt(etHighScore.getText().toString().trim());
 					mCurSubTitle = 0;
 					initSubtitleMenu();
 					doSearch();					

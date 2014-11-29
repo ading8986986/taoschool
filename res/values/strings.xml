@@ -79,5 +79,6 @@
     <string name="ten_score">±10</string>
     <string name="fifteen_score">±15</string>
     <string name="no_score_hint">请输入预估分数</string>
+    <string name="no_province_hint">请选择考生所在地</string>
 
 </resources>
