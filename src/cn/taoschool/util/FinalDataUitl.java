@@ -16,34 +16,34 @@ import android.widget.ListView;
  * 将省，专业，院校等字符串转成int的编码
  **/
 public class FinalDataUitl {
-	public static final HashMap<Integer,String> provinceEncode = new HashMap<Integer,String>(){
+	public static final List<String> provinceEncode = new ArrayList<String>(){
 		{
-			put(0, "全部");put(1,"北京");put(2,"天津");put(3,"辽宁");put(4,"吉林");put(5,"黑龙江");
-			put(6,"上海");put(7,"江苏");put(8,"浙江");put(9,"安徽");put(10,"福建");
-			put(11,"山东");put(12,"湖北");put(13,"湖南");put(14,"广东");put(15,"重庆");
-			put(16,"四川");put(17,"陕西");put(18,"甘肃");put(19,"河北");put(20,"山西");
-			put(21,"内蒙古");put(22,"河南");put(23,"海南");put(24,"广西");put(25,"贵州");
-			put(26,"云南");put(27,"西藏");put(28,"青海");put(29,"宁夏");put(30,"新疆");
-			put(31,"江西");put(32,"香港");put(33,"澳门");put(34,"台湾");
+			add(0,"全部");add(1,"北京");add(2,"天津");add(3,"辽宁");add(4,"吉林");add(5,"黑龙江");
+			add(6,"上海");add(7,"江苏");add(8,"浙江");add(9,"安徽");add(10,"福建");
+			add(11,"山东");add(12,"湖北");add(13,"湖南");add(14,"广东");add(15,"重庆");
+			add(16,"四川");add(17,"陕西");add(18,"甘肃");add(19,"河北");add(20,"山西");
+			add(21,"内蒙古");add(22,"河南");add(23,"海南");add(24,"广西");add(25,"贵州");
+			add(26,"云南");add(27,"西藏");add(28,"青海");add(29,"宁夏");add(30,"新疆");
+			add(31,"江西");add(32,"香港");add(33,"澳门");add(34,"台湾");
 		}
 	};
 	
-	public static final HashMap<Integer,String> xylxEncode = new HashMap<Integer,String>(){
+	public static final List<String> xylxEncode = new ArrayList<String>(){
 		{
-			put(0, "全部");put(1,"综合");put(2,"工科");put(3,"财经");put(4,"农业");put(5,"林业");
-			put(6,"医药");put(7,"师范");put(8,"体育");put(9,"语言");put(10,"政法");
-			put(11,"艺术");put(12,"民族");put(13,"军事");put(14,"党政");
+			add(0, "全部");add(1,"综合");add(2,"工科");add(3,"财经");add(4,"农业");add(5,"林业");
+			add(6,"医药");add(7,"师范");add(8,"体育");add(9,"语言");add(10,"政法");
+			add(11,"艺术");add(12,"民族");add(13,"军事");add(14,"党政");
 		}
 	};
-	public static final HashMap<Integer,String> bxlxEncode = new HashMap<Integer,String>(){
+	public static final List<String> bxlxEncode = new ArrayList<String>(){
 		{
-			put(0, "全部");put(1,"大学");put(2,"学院");put(3,"高等职业技术学校");put(4,"高等专科学校");put(5,"独立学院");
-			put(6,"高等学校分校");put(7,"短期职业大学");put(8,"成人高等学校");put(9,"管理干部学院");put(10,"教育学院");		
+			add(0, "全部");add(1,"大学");add(2,"学院");add(3,"高等职业技术学校");add(4,"高等专科学校");add(5,"独立学院");
+			add(6,"高等学校分校");add(7,"短期职业大学");add(8,"成人高等学校");add(9,"管理干部学院");add(10,"教育学院");		
 		}
 	};
-	public static final HashMap<Integer,String> xlccEncode = new HashMap<Integer,String>(){
+	public static final List<String> xlccEncode = new ArrayList<String>(){
 		{
-			put(0, "全部");put(1,"本科");put(2,"本科/高职(专科)");put(3,"高职(专科)");put(4,"未知");
+			add(0, "全部");add(1,"本科");add(2,"本科/高职(专科)");add(3,"高职(专科)");add(4,"未知");
 		}
 	};
 	
@@ -119,43 +119,30 @@ public class FinalDataUitl {
 	}
 	
 	public static List getAllProvice(){
-		List list = new ArrayList<String>();
-		Iterator iterator = provinceEncode.entrySet().iterator();
-		while(iterator.hasNext()){
-			Map.Entry entry = (Map.Entry) iterator.next();
-			list.add(entry.getValue());
-		}
+		
+		return provinceEncode;
+	}
+	
+	public static List getAllProvice(boolean removeFirstItem){
+		List<String> list = new ArrayList<String>();
+		list.addAll(provinceEncode);
+		list.remove(0);
 		return list;
 	}
 	
 	public static List getAllXYLX(){
-		List list = new ArrayList<String>();
-		Iterator iterator = xylxEncode.entrySet().iterator();
-		while(iterator.hasNext()){
-			Map.Entry entry = (Map.Entry) iterator.next();
-			list.add(entry.getValue());
-		}
-		return list;
+		
+		return xylxEncode;
 	}
 	
 	public static List getAllBXLX(){
-		List list = new ArrayList<String>();
-		Iterator iterator = bxlxEncode.entrySet().iterator();
-		while(iterator.hasNext()){
-			Map.Entry entry = (Map.Entry) iterator.next();
-			list.add(entry.getValue());
-		}
-		return list;
+		
+		return bxlxEncode;
 	}
 	
 	public static List getAllXLCC(){
-		List list = new ArrayList<String>();
-		Iterator iterator = xlccEncode.entrySet().iterator();
-		while(iterator.hasNext()){
-			Map.Entry entry = (Map.Entry) iterator.next();
-			list.add(entry.getValue());
-		}
-		return list;
+		
+		return xlccEncode;
 	}
 	
 	public static List<String> getFirstLevelMajorList(){

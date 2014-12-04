@@ -18,12 +18,12 @@
         >
   
 	    <ImageView android:id="@+id/school_img"   
-	        android:layout_width="50dp"  
-	        android:layout_height="50dp"  
+	        android:layout_width="60dp"  
+	        android:layout_height="60dp"  
 	        android:src="@drawable/ic_launcher"
 	        android:layout_gravity="center_vertical" 
 	        android:layout_marginRight="@dimen/list_item_padding"
-	        android:background="@drawable/rect_circle_gray"/>  
+	        />  
 	  
 	    <LinearLayout android:orientation="vertical"  
 	        android:layout_width="wrap_content"   

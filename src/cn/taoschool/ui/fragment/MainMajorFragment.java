@@ -90,7 +90,8 @@ OnClickListener{
 	private List<SchoolItem> schoolList;
 	private MainActivityListAdapter mAdapter;
 	private Handler mHandler;
-	
+	private String defaultProvince="所在省市";
+	private String defaultMajor="专业类型";
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -413,13 +414,13 @@ OnClickListener{
 		}
 		else if(parent == lvOneLevelListView){
 			province = position+"";
-			tv_sub_title1.setText(list_province.get(position));	
+			tv_sub_title1.setText(0==position?defaultProvince:list_province.get(position));	
 			provinceAdapter.setItemSelect(position, true);
 			doSearch();
 		}
 		else if(parent == lvFirstLevel){
 			firstLevelMajor = position + "";
-			tv_sub_title2.setText(listFirstLevelMajor.get(position));
+			tv_sub_title2.setText(0==position?defaultMajor:listFirstLevelMajor.get(position));
 			firstLevelAdapter.setItemSelect(position, true);
 			listSecondLevelMajor = FinalDataUitl.getSecondLevelMajorList(position);
 			secondLevelAdapter = new ExpandMenuAdapter(getActivity(), listSecondLevelMajor);
@@ -428,7 +429,7 @@ OnClickListener{
 		}
 		else if(parent == lvSecondLevel){
 			secondLevelMajor = position + "";
-			tv_sub_title2.setText(listSecondLevelMajor.get(position));
+			if(0!=position) tv_sub_title2.setText(listSecondLevelMajor.get(position));
 			secondLevelAdapter.setItemSelect(position, true);
 			doSearch();
 		}

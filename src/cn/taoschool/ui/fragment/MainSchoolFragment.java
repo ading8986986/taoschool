@@ -75,6 +75,11 @@ OnClickListener,OnItemClickListener{
 	private String bxlxid = "0";
 	private String xlccid = "0";
 	private String keyword = "";
+	private String defaultProvince="所在省市";
+	private String defaultXYLx="院校类型";
+	private String defaultBXLX="办学类型";
+	private String defaultXLCC="学历层次";
+	
 	
 	
 	private int beginAt;
@@ -399,25 +404,25 @@ OnClickListener,OnItemClickListener{
 			switch(mCurSubTitle){
 			case 1:
 				province = position+"";
-				tv_sub_title1.setText(list_province.get(position));	
+				tv_sub_title1.setText(0==position?defaultProvince:list_province.get(position));	
 				provinceAdapter.setItemSelect(position, true);
 				doSearch();
 				break;
 			case 2:
 				yxlxid = position+"";
-				tv_sub_title2.setText(list_xylx.get(position));
+				tv_sub_title2.setText(0==position?defaultXYLx:list_xylx.get(position));
 				yxlxAdapter.setItemSelect(position, true);
 				doSearch();
 				break;
 			case 3:
 				bxlxid = position+"";
-				tv_sub_title3.setText(list_bxlx.get(position));
+				tv_sub_title3.setText(0==position?defaultBXLX:list_bxlx.get(position));
 				bxlxAdapter.setItemSelect(position, true);
 				doSearch();
 				break;
 			case 4:
 				xlccid = position+"";
-				tv_sub_title4.setText(list_xlcc.get(position));
+				tv_sub_title4.setText(0==position?defaultXLCC:list_xlcc.get(position));
 				xlccAdapter.setItemSelect(position, true);
 				doSearch();
 				break;

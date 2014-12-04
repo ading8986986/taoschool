@@ -93,8 +93,8 @@ public class DetailOfEnrollFragment extends BasicDetailFragment implements OnCli
 	}
 	
 	public void initData() {	
-		provinceList = FinalDataUitl.getAllProvice();
-		provinceList.remove(0);//按省份筛选，此时不应该有“全部”选项	
+		provinceList = FinalDataUitl.getAllProvice(true);
+		//provinceList.remove(0);//按省份筛选，此时不应该有“全部”选项	
 		tvProvince.setText(provinceList.get(0));
 		tvYear.setText(FinalDataUitl.getCurrentYear()+"年");
 		tvBranch.setText(FinalDataUitl.getBranchList().get(0));
@@ -199,7 +199,7 @@ public class DetailOfEnrollFragment extends BasicDetailFragment implements OnCli
 		switch (mCurFilter) {
 		case 1:
 			province = position+1;
-			tvProvince.setText(FinalDataUitl.getProvinceByid(position+1));
+			tvProvince.setText(provinceList.get(position));
 			filterProvinceAdapter.setItemSelect(position, true);
 			break;
 		case 2:
