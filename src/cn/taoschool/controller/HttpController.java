@@ -191,6 +191,87 @@ public class HttpController {
 		}
 	}
 	
+	/**
+	 * 我的淘
+	 * **/
+public void getMySchoolProfileList(final Context context, final IMainActivityReqListener listener,JSONObject params) {	
+		
+		String url = Constants.MY_SCHOOL;
+		Log.i(TAG,"params="+params.toString());
+		JsonObjectRequest getSchoolProfileReq = new JsonObjectRequest(Method.POST, url,
+                params,new Listener<JSONObject>() {
+					
+					private void processFailed() {
+						if(null != listener) 
+						listener.onSchoolListObtained(false, null);
+						return;
+					}
+					
+					@Override
+					public void onResponse(JSONObject response) {
+						if (null != response) {
+							Log.i(TAG,"response="+response.toString());
+							if(response.optInt("respCode") == 200){
+								//int length = response.optInt("listLength");	
+								schoolList = new ArrayList<SchoolItem>();
+								JSONArray data = response.optJSONArray("schoolList");
+								int length = 0;
+								if(data!=null) { length = data.length();}
+								else {
+									if(listener!=null)
+										listener.onSchoolListObtained(true, (ArrayList<SchoolItem>) schoolList);
+									return;
+								}
+								for(int i = 0;i<length;i++){
+									SchoolItem item = new SchoolItem();
+									JSONObject obj = data.optJSONObject(i);
+									try {
+										item.setName(obj.getString("colname"));
+										item.setYXLX(obj.getInt("yxlxid"));
+										item.setBXLX(obj.getInt("bxlxid"));
+										item.setXLCC(obj.getInt("xlccid"));
+										item.setId(obj.getInt("colid"));
+										item.setTel(obj.getString("zbtel"));
+										item.setAddress(obj.getString("coladdress"));
+										item.setMail(obj.getString("zbmail"));
+										item.setWeb( obj.getString("colweb"));
+										item.setIs211(obj.getBoolean("is211"));
+										item.setIs985( obj.getBoolean("is985"));
+										schoolList.add(item);
+									} catch (JSONException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+										processFailed();
+									}								
+								}
+								listener.onSchoolListObtained(true, schoolList);
+							}
+							else{//404 schoolList==null
+								processFailed();
+								return;
+							}
+						}
+						else{
+							processFailed();
+							return;
+						}
+					}
+				},new ErrorListener(){
+
+					@Override
+					public void onErrorResponse(VolleyError response) {
+						// TODO Auto-generated method stub						
+						Log.d(TAG,  response.toString());
+						if(null != listener) 
+							listener.onSchoolListObtained(false, null);
+						return;
+					}
+				});
+		RequestManager.getInstance(context.getApplicationContext())
+        .addToRequestQueue(getSchoolProfileReq, TAG);
+		
+	}
+	
 	public void getSchoolDetail(Context ctx,final IDetailActivityFragmentListener listener,int schoolID){
 		//mlistener = listener;
 		

@@ -9,6 +9,7 @@ public class Constants {
 	public static final String DETAIL_ENROLL_INFO = SERVER_IP + "getlqxxinf";
 	public static final String DETAIL_MAJOR_ENROLL = SERVER_IP + "getzylqxxinf";
 	public static final String DETAIL_ENROLL_PLAN = SERVER_IP + "getzsjhinf";
+	public static final String MY_SCHOOL = SERVER_IP + "myschoollist";
 	
 
 	public static final String APP_ENV = "app_env";

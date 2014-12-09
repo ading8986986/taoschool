@@ -11,6 +11,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,15 +21,20 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import cn.taoschool.R;
+import cn.taoschool.adapter.MainActivityListAdapter;
 import cn.taoschool.bean.SchoolItem;
+import cn.taoschool.controller.HttpController;
 import cn.taoschool.pulltorefresh.library.PullToRefreshBase;
+import cn.taoschool.pulltorefresh.library.PullToRefreshListView;
 import cn.taoschool.ui.ChoiceListActivity;
+import cn.taoschool.util.EnvUtils;
 import cn.taoschool.util.UtilToast;
 
 public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
@@ -39,7 +46,8 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 	private EditText etStudentScore;
 	private RadioButton rbSchool,rbMajor;
 	private RadioGroup rbPreference;
-	
+	private ListView lvSchoolProfile;
+	private boolean isTaskCancled = false;//网络任务没有被用户手动cancle
 	private String[] deviations = new String[]{"0","±5","±10","±15"};
 	private String[] branchs = new String[]{"文科","理科"};
 	
@@ -51,11 +59,14 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 	private String firstLevelMajor="0";
 	private String secondLevelMajor="0";
 	private String preference="0";
-	private String studentScore;
+	private String studentScore="0";
 	private int scoreDeviation = 5;
 	private int branch = 0;
 	private int beginAt = 0;
-	
+	private List<SchoolItem> schoolList;
+	private MainActivityListAdapter mAdapter;
+	private HttpController mController;
+	private Handler mHandler;
 	private ChoiceListViewOnclickListener mListener;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,10 +78,43 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 	}
 	
 	private void initData(){
+		if( null == mController) mController = HttpController.getInstance(getActivity());
 		mListener = new ChoiceListViewOnclickListener();
+		mHandler = new Handler(){  
+			  
+		    @Override  
+		    public void handleMessage(final Message msg) {  
+		        super.handleMessage(msg);  
+		        dissmissProgressDialog();			       
+		        if(lvSchoolProfile!=null)
+		        	lvSchoolProfile.setVisibility(View.VISIBLE);
+		        if(!isTaskCancled){
+			        switch (msg.what) {  
+			        
+			        case -1://网络问题
+			        	UtilToast.showShort(getActivity(), R.string.net_cannot_used);
+			        case 0://加载schoolList->fail 
+			        	//UtilToast.showLong(getActivity(), "fail");
+			        	break;	
+			        case 1:  //加载schoolList->success
+			        	//UtilToast.showLong(getActivity(), "success");	
+			        	mAdapter = new MainActivityListAdapter(getActivity(), schoolList);
+			        	lvSchoolProfile.setAdapter(mAdapter);
+			            break;
+			        case 2://加载schoolList-> 空
+			        	UtilToast.showShort(getActivity(), "查询结果为空");
+			        	break;
+			        default:  
+			            break;  
+			        } 
+		        }
+		    }
+		};
 	}
 	
 	private void initView(){
+		lvSchoolProfile = (ListView) rootView.findViewById(R.id.lv_school_list);
+		mLoadingView = (LinearLayout) rootView.findViewById(R.id.ll_loading);
 		etStudentScore = (EditText) rootView.findViewById(R.id.et_score);
 		tvStudentLocation = (TextView) rootView.findViewById(R.id.tv_location);
 		tvSchoolLocation = (TextView) rootView.findViewById(R.id.tv_school_location);
@@ -111,13 +155,24 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 	@Override
 	public void onSchoolListObtained(boolean isSuccess, List<SchoolItem> result) {
 		// TODO Auto-generated method stub
-		
+		if(isSuccess) {
+			if(result.size() == 0){
+				mHandler.sendEmptyMessage(2);
+			}
+			else{						
+				mController.getSchoolProfileImages(this, result);
+			}
+		}
+		else 
+			mHandler.sendEmptyMessage(0);
 	}
 
 	@Override
 	public void OnImageInitialized(Object result) {
 		// TODO Auto-generated method stub
-		
+		schoolList.addAll((List<SchoolItem>) result);
+		beginAt = beginAt+ ((List<SchoolItem>) result).size();
+		mHandler.sendEmptyMessage(1);
 	}
 
 	@Override
@@ -146,8 +201,12 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 
 	@Override
 	public void doSearch() {
-//		getAllParams();
-		if(TextUtils.isEmpty(etStudentScore.getText())){
+		if(!EnvUtils.isNetworkConnected(getActivity())){
+			UtilToast.showShort(getActivity(), R.string.net_cannot_used);
+			return;
+		}
+		this.studentScore = etStudentScore.getText().toString();
+		if(TextUtils.isEmpty(this.studentScore)){
 			UtilToast.showShort(getActivity(), R.string.no_score_hint);
 			return;
 		}
@@ -155,7 +214,10 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 			UtilToast.showShort(getActivity(), R.string.no_province_hint);
 			return;
 		}
+		showProgressDialog();
+		isTaskCancled = false;
 		setFilterParam();
+		mController.getMySchoolProfileList(getActivity(), this, filter_params);	
 	}
 	
 	private void getAllParams(){
@@ -177,11 +239,10 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 			filter_params.put("firstLevelMajor", this.firstLevelMajor);
 			filter_params.put("secondLevelMajor", this.secondLevelMajor);
 			filter_params.put("preference", this.preference);
-			filter_params.put("studentScore", this.studentScore);
+			filter_params.put("score", this.studentScore);
 			filter_params.put("scoreDeviation", this.scoreDeviation);
 			filter_params.put("branch", this.branch);
 			filter_params.put("beginAt", this.beginAt);
-			Log.i("TAG","fileterParam="+filter_params.toString());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -192,8 +253,22 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 
 	@Override
 	public boolean onReturnAction() {
-		// TODO Auto-generated method stub
-		return false;
+		/**
+		 * 按下返回键
+		 * **/
+		if((lvSchoolProfile!=null && lvSchoolProfile.getVisibility() == View.VISIBLE)) {
+			//在加载数据
+			lvSchoolProfile.setVisibility(View.GONE);
+			return true;
+		}
+		if((mLoadingView!=null && mLoadingView.getVisibility() == View.VISIBLE)) {
+			//在加载数据
+			isTaskCancled = true;
+			dissmissProgressDialog();
+			return true;
+		}
+		else
+			return false;
 	}
 
 	public class ChoiceListViewOnclickListener implements OnClickListener{
@@ -321,5 +396,7 @@ public class MyTaoFragment extends BasicMainFragment implements OnClickListener{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 
 }
